@@ -1,4 +1,4 @@
-REM filepath: c:\Users\97798\Desktop\Esewa\college_event_management_system\college_event_management_system\backend\setup_db.bat
+
 @echo off
 echo Creating PostgreSQL database for College Event Management System...
 
