@@ -1,44 +1,41 @@
-
-.env
+# Python
 __pycache__/
 *.py[cod]
 *.class
 *.so
 .Python
 venv/
-
-
-static/qrcodes/*
-!static/qrcodes/.gitkeep
-
-
-*.db
-
-
-.vscode/
-.idea/
-
-
-frontend/.env.development
-frontend/.env.production
-**/.env*
-
-
-frontend/node_modules/
 **/venv/
 **/__pycache__/
 **/*.pyc
 
-frontend/dist/
-frontend/build/
+# Environment variables and secrets
+.env
+**/.env*
+frontend/.env.development
+frontend/.env.production
 
-
-.vscode/
-.idea/
-
-
+# Database files
+*.db
 **/*.db
 **/*.sqlite
 
+# Static files
+static/qrcodes/*
+!static/qrcodes/.gitkeep
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# IDE and editors
+.vscode/
+.idea/
+
+# ML models
 backend/ml/models/serialized/*
 
+# Logs
+*.log
+logs/

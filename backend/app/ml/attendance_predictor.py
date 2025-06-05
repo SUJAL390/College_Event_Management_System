@@ -1,3 +1,4 @@
+
 import os
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -8,12 +9,12 @@ import joblib
 from datetime import datetime
 
 class AttendancePredictor:
-    def _init_(self):
+    def __init__(self):
         self.model = None
-        self.model_dir = os.path.join(os.path.dirname(os.path.abspath(_file_)), 'models')
-        self.model_path = os.path.join(self.model_dir, 'attendance_model.pkl')
-        os.makedirs(self.model_dir, exist_ok=True)
         
+        self.model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models')
+        self.model_path = os.path.join(self.model_dir, 'attendance_model.pkl')
+        os.makedirs(self.model_dir, exist_ok=True)     
       
         self.categorical_features = ['day_of_week', 'event_category', 'time_slot']
         self.numerical_features = [
@@ -22,7 +23,7 @@ class AttendancePredictor:
         ]
     
     def _ensure_model_loaded(self):
-        """Ensure the model is loaded or create a new one"""
+       
         if self.model is None:
             try:
                
@@ -32,7 +33,7 @@ class AttendancePredictor:
                 self._create_basic_model()
     
     def _create_basic_model(self):
-        """Create a basic model when no training data is available"""
+        
         
         categorical_transformer = Pipeline(steps=[
             ('onehot', OneHotEncoder(handle_unknown='ignore'))
@@ -48,14 +49,14 @@ class AttendancePredictor:
                 ('num', numerical_transformer, self.numerical_features)
             ])
         
-        # Create and save a basic model pipeline
+        
         self.model = Pipeline(steps=[
             ('preprocessor', preprocessor),
             ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
         ])
     
     def train(self, training_data):
-        """Train the model with attendance data"""
+       
         if not isinstance(training_data, pd.DataFrame):
             raise ValueError("Training data must be a pandas DataFrame")
         
@@ -77,7 +78,7 @@ class AttendancePredictor:
         joblib.dump(self.model, self.model_path)
     
     def predict_attendance_probability(self, user_data):
-        """Predict probability of attendance for given users and events"""
+       
         self._ensure_model_loaded()
         
       

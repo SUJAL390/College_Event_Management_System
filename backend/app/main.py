@@ -16,10 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API router
+
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-# Mount static files for QR codes
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")

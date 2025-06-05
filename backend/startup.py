@@ -1,8 +1,9 @@
-from sqlalchemy.orm import Session
-from app.db.session import SessionLocal
 from app.db.init_db import init_db
+from app.db.session import SessionLocal
+from app.core.config import settings
+print(f"Using database: {settings.DATABASE_URL}")
 
-def init():
+def main():
     db = SessionLocal()
     try:
         init_db(db)
@@ -10,4 +11,5 @@ def init():
         db.close()
 
 if __name__ == "__main__":
-    init()
+    main()
+    print("Database initialized successfully!")
