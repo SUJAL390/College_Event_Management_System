@@ -60,8 +60,8 @@ def predict_attendance(
             time_slot = "evening"
         
        
-        days_to_event = (event.start_time.date() - pd.Timestamp.now().date()).days
         
+        days_to_event = (event.start_time.date() - pd.Timestamp.now(tz='UTC').date()).days
 
         user_registrations = db.query(Registration).filter(Registration.user_id == user.id).all()
         attended_count = sum(1 for reg in user_registrations if reg.check_in_time is not None)
@@ -124,8 +124,8 @@ def train_attendance_model(
     Train the attendance prediction model using historical data.
     """
     # Get all past events
-    past_events = db.query(Event).filter(Event.end_time < pd.Timestamp.now()).all()
-    
+   
+    past_events = db.query(Event).filter(Event.end_time < pd.Timestamp.now(tz='UTC')).all()
     if not past_events:
         raise HTTPException(status_code=400, detail="No past events available for training")
     
