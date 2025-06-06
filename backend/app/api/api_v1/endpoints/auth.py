@@ -22,23 +22,22 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     """
-    OAuth2 compatible token login, get an access token for future requests
+    OAuth2 compatible token login, get an access token for future requests.
+    The username field accepts either email address or username.
     """
     
+    # Try to find user by email first
     user = db.query(User).filter(User.email == form_data.username).first()
+    
+    # If not found, try by username
     if not user:
+        user = db.query(User).filter(User.username == form_data.username).first()
+    
+    if not user or not user.verify_password(form_data.password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password",
+            detail="Incorrect username/email or password",
         )
-    
-    
-    if not user.verify_password(form_data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password",
-        )
-    
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
@@ -66,14 +65,12 @@ def register(
             detail="The user with this email already exists in the system.",
         )
     
-  
     user = db.query(User).filter(User.username == user_in.username).first()
     if user:
         raise HTTPException(
             status_code=400,
             detail="The user with this username already exists in the system.",
         )
-    
     
     new_user = User(
         email=user_in.email,
