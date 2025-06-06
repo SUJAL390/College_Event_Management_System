@@ -26,10 +26,10 @@ def login(
     The username field accepts either email address or username.
     """
     
-    # Try to find user by email first
+  
     user = db.query(User).filter(User.email == form_data.username).first()
     
-    # If not found, try by username
+ 
     if not user:
         user = db.query(User).filter(User.username == form_data.username).first()
     
