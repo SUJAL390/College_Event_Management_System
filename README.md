@@ -26,7 +26,7 @@ A comprehensive platform for managing college events with advanced features incl
 - **Bug Reporting System**
   - Allow users to report issues
   - Track and manage bug resolution
-
+    
  - **Email Notifications**
   - Event registration confirmations
   - Reminder emails before events
@@ -59,6 +59,7 @@ A comprehensive platform for managing college events with advanced features incl
 
 2.Create a virtual environment
 python -m venv venv
+
 # On Windows
 venv\Scripts\activate
 # On macOS/Linux
