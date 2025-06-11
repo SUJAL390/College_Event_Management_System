@@ -100,10 +100,10 @@ User
   "is_admin": false
 }
 
-```markdown
+
 Error Handling
 Error responses follow this format:
-```
+
 
 {
   "detail": "Error message describing the issue"
