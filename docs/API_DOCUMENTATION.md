@@ -27,7 +27,7 @@ username=user@example.com password=userpassword123
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "token_type": "bearer"
 }
-Register
+**Register:**
 POST /api/v1/auth/register
 Content-Type: application/json
 Request Body:
@@ -36,12 +36,12 @@ Request Body:
   "username": "username",
   "password": "password123"
 }
-Using Authentication
+#Using Authentication
 All protected endpoints require the JWT token in the Authorization header:
 Authorization: Bearer {token}
 The token expires after 8 days (11,520 minutes).
-Core Resources
-Events
+#Core Resources
+#Events
 Events represent college activities that users can register for.
 
 Endpoint	    Method	    Description	                Auth Required
@@ -51,7 +51,7 @@ Endpoint	    Method	    Description	                Auth Required
 /events/{id}	PUT	        Update event	                Yes
 /events/{id}	DELETE	    Delete event	                Yes (Admin)
 
-Registrations
+#Registrations
 Registrations connect users to events and generate QR codes.
 
 Endpoint	                    Method	    Description	        Auth Required
@@ -66,8 +66,8 @@ Endpoint	                Method	        Description	        Auth Required
 /users/me	                GET	            Get current user	    Yes
 /users/{id}/registrations	GET	            User's registrations	Yes
 
-Data Models
-Event
+#Data Models
+**Event**
 {
   "id": 1,
   "title": "Tech Conference 2025",
@@ -82,7 +82,7 @@ Event
   "created_at": "2025-06-11T12:34:56"
 }
 
-Registration
+**Registration**
 {
   "id": 1,
   "user_id": 1,
@@ -92,7 +92,7 @@ Registration
   "unique_code": "7f9c2ba5-7a1c-4ba3-8a53-4647a3fd64e5",
   "qr_code_url": "/static/qrcodes/registration_1.png"
 }
-User
+**User*
 {
   "id": 1,
   "email": "user@example.com",
@@ -101,14 +101,14 @@ User
 }
 
 
-Error Handling
+#Error Handling
 Error responses follow this format:
 
 
 {
   "detail": "Error message describing the issue"
 }
-Common status codes:
+#Common status codes:
 
 400 - Bad Request (validation error)
 401 - Unauthorized (missing/invalid token)
@@ -118,13 +118,14 @@ Common status codes:
 500 - Server Error
 
 
-Testing
+T#esting
 You can use these credentials for testing:
 
 Admin access:
 Email: admin@example.com
 Password: adminpassword123
-CORS Support
+
+#CORS Support
 The API allows requests from:
 
 http://localhost:3000
