@@ -1,3 +1,4 @@
+```markdown
 # College Event Management System API Documentation
 
 ## Overview
@@ -99,5 +100,33 @@ User
   "is_admin": false
 }
 
+```markdown
 Error Handling
 Error responses follow this format:
+```
+
+{
+  "detail": "Error message describing the issue"
+}
+Common status codes:
+
+400 - Bad Request (validation error)
+401 - Unauthorized (missing/invalid token)
+403 - Forbidden (insufficient permissions)
+404 - Resource not found
+422 - Validation Error
+500 - Server Error
+
+
+Testing
+You can use these credentials for testing:
+
+Admin access:
+Email: admin@example.com
+Password: adminpassword123
+CORS Support
+The API allows requests from:
+
+http://localhost:3000
+http://localhost:8000
+```
