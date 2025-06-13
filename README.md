@@ -71,9 +71,12 @@ pip install -r backend/requirements/dev.txt
 4.Configure environment variables
 cp backend/.env.example backend/.env
 
+Note: Edit the .env file to set your own database password and secret key
+
 5.Setup the database
+in setup_db.bat first replace  "your_postgresql_database_password" with actual password
 cd backend
-setup_db.bat
+.\setup_db.bat
 
 6.Initialize the application
 python startup.py
