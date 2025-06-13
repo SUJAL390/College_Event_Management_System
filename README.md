@@ -57,23 +57,23 @@ A comprehensive platform for managing college events with advanced features incl
    git clone https://github.com/yourusername/college_event_management_system.git
    cd college_event_management_system
 
-2.Create a virtual environment
+**2.Create a virtual environment**
 python -m venv venv
 
-# On Windows
+ On Windows
 venv\Scripts\activate
-# On macOS/Linux
+On macOS/Linux
 source venv/bin/activate
 
-3.Install dependencies
+**3.Install dependencies**
 pip install -r backend/requirements/dev.txt
 
-4.Configure environment variables
+**4.Configure environment variables**
 cp backend/.env.example backend/.env
 
 Note: Edit the .env file to set your own database password and secret key
 
-5.Setup the database
+**5.Setup the database**
 in setup_db.bat first replace  "your_postgresql_database_password" with actual password
 
 then run
@@ -81,8 +81,8 @@ cd backend
 
 .\setup_db.bat
 
-6.Initialize the application
+**6.Initialize the application**
 python startup.py
 
-7.Run the development server
+**7.Run the development server**
 uvicorn app.main:app --reload
