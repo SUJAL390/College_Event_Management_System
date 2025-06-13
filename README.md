@@ -75,6 +75,8 @@ Note: Edit the .env file to set your own database password and secret key
 
 5.Setup the database
 in setup_db.bat first replace  "your_postgresql_database_password" with actual password
+
+then run
 cd backend
 .\setup_db.bat
 
