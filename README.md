@@ -84,5 +84,5 @@ cd backend
 **6.Initialize the application :**
 python startup.py
 
-**7.Run the development server -> **
+**7.Run the development server**->
 uvicorn app.main:app --reload
