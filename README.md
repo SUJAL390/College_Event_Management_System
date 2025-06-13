@@ -78,6 +78,7 @@ in setup_db.bat first replace  "your_postgresql_database_password" with actual p
 
 then run
 cd backend
+
 .\setup_db.bat
 
 6.Initialize the application
