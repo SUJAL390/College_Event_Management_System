@@ -1,35 +1,34 @@
-
-export type UserRole = 'student' | 'admin';
+export type UserRole = "student" | "admin";
 
 export interface User {
-  id: string;
-  name: string;
+  id: number;
   email: string;
-  role: UserRole;
-  studentId?: string;
+  username: string;
+  is_admin: boolean;
 }
 
 export interface Event {
-  id: string;
+  id: number;
   title: string;
   description: string;
-  date: string;
-  time: string;
   location: string;
-  organizer: string;
+  start_time: string;
+  end_time: string;
   capacity: number;
-  registered: number;
-  imageUrl?: string;
-  tags: string[];
+  category: string;
+  image_url: string | null;
+  created_by: number;
+  created_at: string;
 }
 
 export interface Registration {
-  id: string;
-  eventId: string;
-  userId: string;
-  registrationDate: string;
-  attended: boolean;
-  qrCode: string;
+  id: number;
+  user_id: number;
+  event_id: number;
+  registration_date: string; // ISO string
+  check_in_time: string | null;
+  unique_code: string;
+  qr_code_url: string; // relative path like "/static/qrcodes/..."
 }
 
 export interface BugReport {
@@ -38,6 +37,6 @@ export interface BugReport {
   description: string;
   submittedBy: string;
   submittedDate: string;
-  status: 'open' | 'in-progress' | 'resolved';
-  priority: 'low' | 'medium' | 'high';
+  status: "open" | "in-progress" | "resolved";
+  priority: "low" | "medium" | "high";
 }

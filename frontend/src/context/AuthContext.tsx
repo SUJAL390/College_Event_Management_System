@@ -1,38 +1,29 @@
+import React, { createContext, useState, useContext, ReactNode } from "react";
+import { User, UserRole } from "@/types";
+import { toast } from "@/hooks/use-toast";
+import axios from "axios";
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { User, UserRole } from '@/types';
-import { toast } from '@/hooks/use-toast';
+const API_URL = "http://localhost:8000/api/v1";
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole
+  ) => Promise<void>;
   isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Mock data for demonstration purposes
-const MOCK_USERS = [
-  {
-    id: '1',
-    name: 'Admin User',
-    email: 'admin@college.edu',
-    role: 'admin' as UserRole,
-  },
-  {
-    id: '2',
-    name: 'Student User',
-    email: 'student@college.edu',
-    role: 'student' as UserRole,
-    studentId: 'S12345',
-  }
-];
-
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
@@ -41,70 +32,74 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string) => {
     // In a real application, you would make an API call here
     try {
-      // Simulating API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock authentication
-      const foundUser = MOCK_USERS.find(u => u.email === email);
-      
-      if (foundUser && password === 'password') { // Simple mock password check
-        setUser(foundUser);
-        localStorage.setItem('user', JSON.stringify(foundUser));
-        toast({
-          title: 'Login successful',
-          description: `Welcome back, ${foundUser.name}!`,
-        });
-      } else {
-        throw new Error('Invalid credentials');
-      }
+      // FastAPI OAuth2 login expects form-url-encoded data:
+      const formData = new URLSearchParams();
+      formData.append("username", email);
+      formData.append("password", password);
+
+      const response = await axios.post(`${API_URL}/auth/login`, formData, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+
+      // Response contains access_token and token_type
+      const { access_token } = response.data;
+      localStorage.setItem("access_token", access_token);
+
+      // Fetch user profile with token
+      const profileResponse = await axios.get(`${API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      const userData: User = profileResponse.data;
+
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${userData.username}!`,
+      });
     } catch (error) {
       toast({
-        title: 'Login failed',
-        description: 'Invalid email or password',
-        variant: 'destructive',
+        title: "Login failed",
+        description: "Invalid email or password",
+        variant: "destructive",
       });
       throw error;
     }
   };
 
-  const register = async (name: string, email: string, password: string, role: UserRole) => {
-    // In a real application, you would make an API call here
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole
+  ) => {
     try {
-      // Simulating API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Check if user already exists
-      const userExists = MOCK_USERS.some(u => u.email === email);
-      
-      if (userExists) {
-        throw new Error('User already exists');
-      }
-      
-      // Create new user (in a real app, this would be done on the server)
-      const newUser: User = {
-        id: `${MOCK_USERS.length + 1}`,
-        name,
+      // Prepare JSON payload matching your backend's Register schema
+      const payload = {
         email,
-        role,
-        studentId: role === 'student' ? `S${Math.floor(10000 + Math.random() * 90000)}` : undefined
+        password,
+        role, // Include role
+        username: name,
       };
-      
-      // Add to mock users (in a real app, this would be saved in a database)
-      MOCK_USERS.push(newUser);
-      
-      // Log in the new user
-      setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
-      
-      toast({
-        title: 'Registration successful',
-        description: `Welcome, ${name}!`,
+
+      await axios.post(`${API_URL}/auth/register`, payload, {
+        headers: { "Content-Type": "application/json" },
       });
+
+      toast({
+        title: "Registration successful",
+        description: `Welcome, ${name}! You can now log in.`,
+      });
+
+      // Optionally, auto-login after registration
+      // await login(email, password);
     } catch (error) {
       toast({
-        title: 'Registration failed',
-        description: error instanceof Error ? error.message : 'An error occurred',
-        variant: 'destructive',
+        title: "Registration failed",
+        description:
+          error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
       });
       throw error;
     }
@@ -112,15 +107,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
+    localStorage.removeItem("access_token");
     toast({
-      title: 'Logged out',
-      description: 'You have been logged out successfully',
+      title: "Logged out",
+      description: "You have been logged out successfully",
     });
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, register, isAuthenticated }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -129,7 +127,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

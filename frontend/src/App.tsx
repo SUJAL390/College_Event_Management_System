@@ -11,7 +11,7 @@ import SidebarWrapper from "./components/layout/Sidebar";
 // Pages
 import Index from "./pages/Index";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
+// import Register from "./pages/Register";
 import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import Dashboard from "./pages/Dashboard";
@@ -19,6 +19,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import BugReport from "./pages/BugReport";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import CreateEvent from "./pages/CreateEvent";
 
 const queryClient = new QueryClient();
 
@@ -33,14 +34,13 @@ const App = () => (
             {/* Routes without Sidebar */}
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            {/* <Route path="/register" element={<Register />} /> */}
 
             {/* Routes with Sidebar */}
-            <Route
-              element={<SidebarWrapper />}
-            >
+            <Route element={<SidebarWrapper />}>
               <Route path="/index" element={<Index />} />
               <Route path="/events" element={<Events />} />
+              <Route path="/events/create" element={<CreateEvent />} />
               <Route path="/events/:id" element={<EventDetail />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/admin" element={<AdminDashboard />} />

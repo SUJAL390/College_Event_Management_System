@@ -15,6 +15,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+print("CORS origins:", settings.BACKEND_CORS_ORIGINS)
 
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
