@@ -10,6 +10,7 @@ from app.db.models.registration import Registration
 from app.db.models.user import User
 
 router = APIRouter()
+from fastapi import Response
 
 @router.get("/", response_model=List[EventWithAttendees])
 def list_events(
@@ -53,21 +54,33 @@ def create_event(
     """
     Create new event.
     """
-    event = EventModel(
-        title=event_in.title,
-        description=event_in.description,
-        location=event_in.location,
-        start_time=event_in.start_time,
-        end_time=event_in.end_time,
-        capacity=event_in.capacity,
-        category=event_in.category,
-        image_url=event_in.image_url,
-        created_by=current_user.id
-    )
-    db.add(event)
-    db.commit()
-    db.refresh(event)
-    return event
+    try:
+        print(f"Creating event: {event_in.dict()}")
+        print(f"Current user: {current_user.id}")
+        
+        event = EventModel(
+            title=event_in.title,
+            description=event_in.description,
+            location=event_in.location,
+            start_time=event_in.start_time,
+            end_time=event_in.end_time,
+            capacity=event_in.capacity or 100,  # Default if None
+            category=event_in.category or "Other",  # Default if None
+            image_url=event_in.image_url,
+            created_by=current_user.id
+        )
+        db.add(event)
+        db.commit()
+        db.refresh(event)
+        return event
+    except Exception as e:
+        db.rollback()
+        print(f"Error creating event: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating event: {str(e)}"
+        )
+
 
 @router.get("/{event_id}", response_model=EventWithAttendees)
 def get_event(
@@ -156,3 +169,17 @@ def delete_event(
     db.delete(event)
     db.commit()
     return None
+
+
+@router.options("/")
+async def options_handler():
+    return Response(
+        content="",
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+            "Access-Control-Allow-Methods": "POST, GET, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Allow-Credentials": "true",
+        }
+    )

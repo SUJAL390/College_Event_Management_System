@@ -25,8 +25,9 @@ class RegistrationInDBBase(RegistrationBase):
     unique_code: str
 
     class Config:
-        orm_mode = True
-
+        model_config = { # Changed from class Config
+        "from_attributes": True # Changed from orm_mode
+    }
 
 class Registration(RegistrationInDBBase):
     pass

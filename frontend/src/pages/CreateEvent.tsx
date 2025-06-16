@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const API_URL = "http://localhost:8000/api/v1/events/";
 
 const CreateEvent: React.FC = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -34,46 +37,51 @@ const CreateEvent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    
+    // Format dates for API
+    const payload = {
+      ...formData,
+      start_time: new Date(formData.start_time).toISOString(),
+      end_time: new Date(formData.end_time).toISOString(),
+    };
+    
+    const token = localStorage.getItem("access_token");
+    
+    console.log("payload", payload);
+    
     try {
-      const token = localStorage.getItem("access_token");
-      const payload = {
-        ...formData,
-        capacity: isNaN(formData.capacity) ? 0 : formData.capacity,
-        start_time: new Date(formData.start_time).toISOString(),
-        end_time: new Date(formData.end_time).toISOString(),
-      };
-      console.log("payload", payload);
-
-      const response = await axios.post(API_URL, payload, {
+      // Use fetch instead of axios as a test
+      const response = await fetch(API_URL, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": token ? `Bearer ${token}` : ""
         },
+        credentials: "include",
+        body: JSON.stringify(payload)
       });
-
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error("Server error:", errorData);
+        throw new Error(`Server responded with ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("Event created:", data);
       toast({
-        title: "Success",
-        description: "Event created successfully!",
+        title: "Success!",
+        description: "Event created successfully",
       });
-
-      setFormData({
-        title: "",
-        description: "",
-        location: "",
-        start_time: "",
-        end_time: "",
-        capacity: 0,
-        category: "",
-        image_url: "",
-      });
-    } catch (error) {
+      navigate("/events");
+    } catch (error: any) {
+      console.error(error);
+      setError(error.message || "Failed to create event");
       toast({
         title: "Error",
-        description: "Failed to create event",
+        description: error.message || "Failed to create event",
         variant: "destructive",
       });
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -82,7 +90,13 @@ const CreateEvent: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md mt-10">
       <h2 className="text-2xl font-bold mb-6 text-center">Create Event</h2>
+      {error && (
+        <div className="p-3 mb-4 text-sm bg-red-100 text-red-700 rounded">
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form fields... */}
         {/* Title */}
         <input
           type="text"
