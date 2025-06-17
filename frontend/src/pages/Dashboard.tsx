@@ -184,7 +184,7 @@ const Dashboard: React.FC = () => {
                                   >
                                     Event Details
                                   </Button>
-                                  <Button
+                                  {/* <Button
                                     variant="ghost"
                                     size="sm"
                                     className="text-destructive hover:text-destructive/80"
@@ -195,7 +195,7 @@ const Dashboard: React.FC = () => {
                                     }
                                   >
                                     Cancel Registration
-                                  </Button>
+                                  </Button> */}
                                 </div>
                               </div>
                             </div>

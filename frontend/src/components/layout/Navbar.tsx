@@ -117,18 +117,18 @@ const Navbar: React.FC = () => {
                       {user?.email}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      {/* {user?.is_admin === false ? `Student ID: ${user?.studentId}` : 'Administrator'} */}
+                      {user?.is_admin === false ? `Student ` : "Administrator"}
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                  {/* <DropdownMenuItem onClick={() => navigate("/profile")}>
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/settings")}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogOut}>
                     <span>Log out</span>

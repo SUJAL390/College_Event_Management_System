@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/layout/Navbar";
 import { registerForEvent } from "@/services/eventService";
+import { useAuth } from "@/context/AuthContext";
 
 const EventDetail: React.FC = () => {
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
@@ -16,6 +18,7 @@ const EventDetail: React.FC = () => {
   const [error, setError] = useState("");
   const [registering, setRegistering] = useState(false);
   const [registerMessage, setRegisterMessage] = useState("");
+  const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
     const loadEvent = async () => {
@@ -32,6 +35,38 @@ const EventDetail: React.FC = () => {
     };
 
     loadEvent();
+    const checkIfRegistered = async () => {
+      try {
+        const userId = Number(localStorage.getItem("user_id"));
+        const token = localStorage.getItem("access_token");
+
+        if (!userId || !token) return;
+
+        const response = await fetch(
+          "http://localhost:8000/api/v1/registrations/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        const alreadyRegistered = data.some(
+          (r: any) => r.user_id === userId && r.event_id === Number(id)
+        );
+
+        if (alreadyRegistered) {
+          setIsRegistered(true);
+          setRegisterMessage("You are already registered for this event.");
+        }
+      } catch (err) {
+        console.error("Failed to check registration", err);
+      }
+    };
+
+    checkIfRegistered();
   }, [id]);
 
   if (loading) return <div className="p-6 text-center">Loading...</div>;
@@ -134,36 +169,49 @@ const EventDetail: React.FC = () => {
                 {event.capacity} spots
               </span>
             </div>
+
             <div className="pt-4">
-              <Button
-                className="w-full"
-                disabled={registering}
-                onClick={async () => {
-                  setRegistering(true);
-                  setRegisterMessage("");
+              {!user?.is_admin && (
+                <>
+                  <Button
+                    className="w-full"
+                    disabled={registering || isRegistered}
+                    onClick={async () => {
+                      setRegistering(true);
+                      setRegisterMessage("");
 
-                  try {
-                    const userId = Number(localStorage.getItem("user_id")); // Adjust if user_id is stored elsewhere
-                    if (!userId)
-                      throw new Error("User ID not found in localStorage.");
+                      try {
+                        const userId = Number(localStorage.getItem("user_id"));
+                        if (!userId)
+                          throw new Error("User ID not found in localStorage.");
 
-                    await registerForEvent(userId, Number(event.id));
-                    setRegisterMessage(
-                      "Successfully registered for the event!"
-                    );
-                  } catch (error: any) {
-                    setRegisterMessage(error.message || "Registration failed.");
-                  } finally {
-                    setRegistering(false);
-                  }
-                }}
-              >
-                {registering ? "Registering..." : "Register"}
-              </Button>
-              {registerMessage && (
-                <p className="text-sm mt-2 text-center text-muted-foreground">
-                  {registerMessage}
-                </p>
+                        await registerForEvent(userId, Number(event.id));
+                        setRegisterMessage(
+                          "Successfully registered for the event!"
+                        );
+                        setIsRegistered(true); // 👈 mark as registered
+                      } catch (error: any) {
+                        setRegisterMessage(
+                          error.message || "Registration failed."
+                        );
+                      } finally {
+                        setRegistering(false);
+                      }
+                    }}
+                  >
+                    {isRegistered
+                      ? "Registered"
+                      : registering
+                      ? "Registering..."
+                      : "Register"}
+                  </Button>
+
+                  {registerMessage && (
+                    <p className="text-sm mt-2 text-center text-muted-foreground">
+                      {registerMessage}
+                    </p>
+                  )}
+                </>
               )}
             </div>
           </div>

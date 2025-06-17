@@ -76,6 +76,33 @@ const AdminDashboard: React.FC = () => {
 
     loadRegistrations();
 
+    const fetchBugs = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await fetch(
+          "http://localhost:8000/api/v1/bugs/?skip=0&limit=100",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch bug reports");
+        }
+
+        const data = await response.json();
+        setBugReports(data);
+      } catch (error) {
+        console.error("Error fetching bug reports:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBugs();
+
     const loadData = async () => {
       try {
         const [eventsData, bugsData] = await Promise.all([
@@ -127,8 +154,19 @@ const AdminDashboard: React.FC = () => {
     bugId: string,
     status: "open" | "in-progress" | "resolved"
   ) => {
+    // Map to expected format
+    const statusMap: Record<
+      "open" | "in-progress" | "resolved",
+      "Open" | "In Progress" | "Resolved"
+    > = {
+      open: "Open",
+      "in-progress": "In Progress",
+      resolved: "Resolved",
+    };
+    const mappedStatus = statusMap[status];
+
     try {
-      await updateBugStatus(bugId, status);
+      await updateBugStatus(Number(bugId), mappedStatus);
 
       // Update local state
       setBugReports((prev) =>
@@ -302,20 +340,20 @@ const AdminDashboard: React.FC = () => {
                     <div className="text-center py-12">
                       <p>Loading bug reports...</p>
                     </div>
-                  ) : filteredBugReports.length > 0 ? (
+                  ) : bugReports.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
                           <TableHead>ID</TableHead>
                           <TableHead>Title</TableHead>
-                          <TableHead>Priority</TableHead>
                           <TableHead>Status</TableHead>
+
                           <TableHead>Date Submitted</TableHead>
                           <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredBugReports.map((bug) => (
+                        {bugReports.map((bug) => (
                           <TableRow key={bug.id}>
                             <TableCell className="font-medium">
                               {bug.id}
@@ -324,29 +362,17 @@ const AdminDashboard: React.FC = () => {
                             <TableCell>
                               <Badge
                                 className={`${
-                                  bug.priority === "high"
-                                    ? "bg-red-500"
-                                    : bug.priority === "medium"
-                                    ? "bg-yellow-500"
-                                    : "bg-blue-500"
-                                }`}
-                              >
-                                {bug.priority}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                className={`${
                                   bug.status === "open"
-                                    ? "bg-blue-500"
+                                    ? "bg-red-500"
                                     : bug.status === "in-progress"
                                     ? "bg-yellow-500"
-                                    : "bg-green-500"
+                                    : "bg-blue-500"
                                 }`}
                               >
                                 {bug.status}
                               </Badge>
                             </TableCell>
+
                             <TableCell>
                               {new Date(bug.submittedDate).toLocaleDateString()}
                             </TableCell>
