@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
                 Events
               </Link>
 
-              {isAuthenticated && (
+              {isAuthenticated && user.is_admin === false && (
                 <Link
                   to="/dashboard"
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
@@ -78,17 +78,18 @@ const Navbar: React.FC = () => {
                   Admin
                 </Link>
               )}
-
-              <Link
-                to="/bug-report"
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  isActive("/bug-report")
-                    ? "border-college-600 text-college-800"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                Report Bug
-              </Link>
+              {isAuthenticated && user.is_admin === false && (
+                <Link
+                  to="/bug-report"
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                    isActive("/bug-report")
+                      ? "border-college-600 text-college-800"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  Report Bug
+                </Link>
+              )}
             </div>
           </div>
           <div className="flex items-center">

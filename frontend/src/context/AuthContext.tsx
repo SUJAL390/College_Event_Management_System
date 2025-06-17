@@ -7,7 +7,7 @@ const API_URL = "http://localhost:8000/api/v1";
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   logout: () => void;
   register: (
     name: string,
@@ -30,9 +30,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const isAuthenticated = !!user;
 
   const login = async (email: string, password: string) => {
-    // In a real application, you would make an API call here
     try {
-      // FastAPI OAuth2 login expects form-url-encoded data:
       const formData = new URLSearchParams();
       formData.append("username", email);
       formData.append("password", password);
@@ -53,11 +51,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("user_id", userData.id.toString());
 
       toast({
         title: "Login successful",
         description: `Welcome back, ${userData.username}!`,
       });
+      return userData;
     } catch (error) {
       toast({
         title: "Login failed",

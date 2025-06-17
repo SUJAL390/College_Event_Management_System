@@ -31,6 +31,11 @@ const SidebarNav: React.FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const handleLogOut = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -53,7 +58,7 @@ const SidebarNav: React.FC = () => {
             </SidebarMenuButton>
           </SidebarMenuItem>
 
-          {isAuthenticated && (
+          {isAuthenticated && user.is_admin === false && (
             <SidebarMenuItem>
               <SidebarMenuButton
                 isActive={isActive("/dashboard")}
@@ -76,17 +81,18 @@ const SidebarNav: React.FC = () => {
               <span>About</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
-
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={isActive("/bug-report")}
-              onClick={() => navigate("/bug-report")}
-              tooltip="Report Bug"
-            >
-              <Bug className="h-4 w-4" />
-              <span>Report Bug</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {isAuthenticated && user.is_admin === false && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={isActive("/bug-report")}
+                onClick={() => navigate("/bug-report")}
+                tooltip="Report Bug"
+              >
+                <Bug className="h-4 w-4" />
+                <span>Report Bug</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
 
           {isAuthenticated && user?.is_admin === true && (
             <SidebarMenuItem>
@@ -126,7 +132,7 @@ const SidebarNav: React.FC = () => {
               variant="outline"
               size="sm"
               className="w-full text-xs"
-              onClick={logout}
+              onClick={handleLogOut}
             >
               Log out
             </Button>
@@ -137,7 +143,7 @@ const SidebarNav: React.FC = () => {
       <SidebarFooter>
         <div className="px-3 py-2">
           <div className="text-xs text-center text-muted-foreground">
-            CampusEvents © {new Date().getFullYear()}
+            CampusConnect © {new Date().getFullYear()}
           </div>
         </div>
       </SidebarFooter>

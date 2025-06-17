@@ -15,7 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Search, Plus, Edit, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/layout/Navbar";
-import { fetchEvents, deleteEvent } from "@/services/eventService";
+import {
+  fetchEvents,
+  deleteEvent,
+  getUserRegistrations,
+} from "@/services/eventService";
 import { fetchBugReports, updateBugStatus } from "@/services/bugService";
 import { Event, BugReport } from "@/types";
 import { toast } from "@/hooks/use-toast";
@@ -29,6 +33,10 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [eventsSearchQuery, setEventsSearchQuery] = useState("");
   const [bugsSearchQuery, setBugsSearchQuery] = useState("");
+  const [registrations, setRegistrations] = useState([]);
+  const [eventRegistrationCount, setEventRegistrationCount] = useState<
+    Record<number, number>
+  >({});
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -45,6 +53,28 @@ const AdminDashboard: React.FC = () => {
       navigate("/dashboard");
       return;
     }
+    const loadRegistrations = async () => {
+      try {
+        const allRegistrations = await getUserRegistrations(); // admin will get all
+        setRegistrations(allRegistrations);
+        const countMap: Record<number, number> = {};
+        allRegistrations.forEach((reg) => {
+          countMap[reg.event_id] = (countMap[reg.event_id] || 0) + 1;
+        });
+        setEventRegistrationCount(countMap);
+      } catch (error) {
+        console.error("Failed to load registrations:", error);
+        toast({
+          title: "Error",
+          description: "Unable to fetch registrations",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRegistrations();
 
     const loadData = async () => {
       try {
@@ -71,31 +101,25 @@ const AdminDashboard: React.FC = () => {
   }, [user, isAuthenticated, navigate]);
 
   const handleDeleteEvent = async (eventId: string) => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this event? This action cannot be undone."
-      )
-    ) {
-      try {
-        await deleteEvent(eventId);
+    try {
+      await deleteEvent(Number(eventId)); // convert to number if needed
 
-        // Update local state
-        setEvents((prev) =>
-          prev.filter((event) => String(event.id) !== String(eventId))
-        );
+      toast({
+        title: "Event Deleted",
+        description: "The event has been successfully deleted.",
+      });
 
-        toast({
-          title: "Event deleted",
-          description: "The event has been successfully deleted",
-        });
-      } catch (error) {
-        console.error("Failed to delete event:", error);
-        toast({
-          title: "Error",
-          description: "Failed to delete event",
-          variant: "destructive",
-        });
-      }
+      // Refresh or remove the deleted event from local state
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event.id !== Number(eventId))
+      );
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the event.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -204,14 +228,20 @@ const AdminDashboard: React.FC = () => {
                             <TableCell className="font-medium">
                               {event.title}
                             </TableCell>
-                            {/* <TableCell>{event.date}</TableCell> */}
+                            <TableCell>{event.start_time}</TableCell>
                             <TableCell>{event.location}</TableCell>
                             <TableCell>
-                              {/* <span className={`font-medium ${
-                                event.registered >= event.capacity ? 'text-destructive' : ''
-                              }`}>
-                                {event.registered}/{event.capacity}
-                              </span> */}
+                              <span
+                                className={`font-medium ${
+                                  eventRegistrationCount[event.id] >=
+                                  event.capacity
+                                    ? "text-destructive"
+                                    : ""
+                                }`}
+                              >
+                                {eventRegistrationCount[event.id] || 0}/
+                                {event.capacity}
+                              </span>
                             </TableCell>
                             <TableCell>
                               <div className="flex space-x-2">
@@ -381,7 +411,7 @@ const AdminDashboard: React.FC = () => {
 
               <div className="bg-green-50 p-4 rounded-md">
                 <div className="text-green-600 text-3xl font-bold">
-                  {/* {events.reduce((total, event) => total + event.registered, 0)} */}
+                  {registrations.length}
                 </div>
                 <div className="text-sm text-green-700">
                   Total Registrations

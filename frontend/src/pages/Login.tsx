@@ -27,8 +27,12 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(signinEmail, signinPassword);
-      navigate("/dashboard");
+      const user = await login(signinEmail, signinPassword);
+      if (user.is_admin === false) {
+        navigate("/dashboard");
+      } else {
+        navigate("/admin");
+      }
     } catch (error) {
       console.error("Login failed:", error);
     } finally {

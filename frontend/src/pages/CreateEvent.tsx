@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
@@ -37,36 +36,36 @@ const CreateEvent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Format dates for API
     const payload = {
       ...formData,
       start_time: new Date(formData.start_time).toISOString(),
       end_time: new Date(formData.end_time).toISOString(),
     };
-    
+
     const token = localStorage.getItem("access_token");
-    
+
     console.log("payload", payload);
-    
+
     try {
       // Use fetch instead of axios as a test
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token ? `Bearer ${token}` : ""
+          Authorization: token ? `Bearer ${token}` : "",
         },
         credentials: "include",
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         console.error("Server error:", errorData);
         throw new Error(`Server responded with ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log("Event created:", data);
       toast({

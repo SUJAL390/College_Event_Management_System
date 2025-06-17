@@ -16,6 +16,7 @@ import QRCodeDisplay from "@/components/checkin/QRCodeDisplay";
 import {
   getUserRegistrations,
   cancelRegistration,
+  fetchEventById,
 } from "@/services/eventService";
 import { Event, Registration } from "@/types";
 import { toast } from "@/hooks/use-toast";
@@ -41,17 +42,17 @@ const Dashboard: React.FC = () => {
 
     const loadRegistrations = async () => {
       if (!user) return;
-
       try {
-        const userRegistrations = await getUserRegistrations(String(user.id));
-        setRegistrations(userRegistrations);
-      } catch (error) {
-        console.error("Failed to fetch registrations:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load your registrations",
-          variant: "destructive",
-        });
+        const registrations = await getUserRegistrations();
+        const enriched = await Promise.all(
+          registrations.map(async (reg) => {
+            const event = await fetchEventById(reg.event_id);
+            return { registration: reg, event };
+          })
+        );
+        setRegistrations(enriched);
+      } catch (e) {
+        console.error(e);
       } finally {
         setLoading(false);
       }
@@ -62,7 +63,7 @@ const Dashboard: React.FC = () => {
 
   const handleCancelRegistration = async (registrationId: string) => {
     try {
-      await cancelRegistration(registrationId);
+      // await cancelRegistration(registrationId);
 
       // Update local state
       setRegistrations((prev) =>
