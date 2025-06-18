@@ -12,15 +12,7 @@ import {
   SidebarSeparator,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import {
-  Calendar,
-  Settings,
-  Info,
-  Bug,
-  User,
-  Home,
-  PanelLeft,
-} from "lucide-react";
+import { Calendar, Settings, Info, Bug, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -103,6 +95,18 @@ const SidebarNav: React.FC = () => {
               >
                 <Settings className="h-4 w-4" />
                 <span>Admin</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+          {isAuthenticated && user?.is_admin === true && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={isActive("/student")}
+                onClick={() => navigate("/student")}
+                tooltip="student users"
+              >
+                <User className="h-4 w-4" />
+                <span>Student Users</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Layout
 import SidebarWrapper from "./components/layout/Sidebar";
@@ -21,6 +22,8 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
+import BugReportDetail from "./pages/BugReportDetail";
+import StudentUsers from "./pages/StudentUsers";
 
 const queryClient = new QueryClient();
 
@@ -35,19 +38,34 @@ const App = () => (
             {/* Routes without Sidebar */}
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
-            {/* <Route path="/register" element={<Register />} /> */}
 
             {/* Routes with Sidebar */}
             <Route element={<SidebarWrapper />}>
               <Route path="/index" element={<Index />} />
               <Route path="/events" element={<Events />} />
+              <Route path="/student" element={<StudentUsers />} />
               <Route path="/events/create" element={<CreateEvent />} />
               <Route path="/events/:id" element={<EventDetail />} />
               <Route path="/events/:id/edit" element={<EditEvent />} />
 
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute allowAdmin={false}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowAdmin={true}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/bug-report" element={<BugReport />} />
+              <Route path="/bug-report/:id" element={<BugReportDetail />} />
               <Route path="/about" element={<About />} />
             </Route>
 

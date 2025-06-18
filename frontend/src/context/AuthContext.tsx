@@ -74,12 +74,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     password: string,
     role: UserRole
   ) => {
+    if (!name || !email || !password || !role) {
+      toast({
+        title: "Incomplete Form",
+        description: "Please fill in all the fields before registering.",
+        variant: "destructive",
+      });
+      return;
+    }
     try {
-      // Prepare JSON payload matching your backend's Register schema
       const payload = {
         email,
         password,
-        role, // Include role
+        role,
         username: name,
       };
 
@@ -91,9 +98,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         title: "Registration successful",
         description: `Welcome, ${name}! You can now log in.`,
       });
-
-      // Optionally, auto-login after registration
-      // await login(email, password);
     } catch (error) {
       toast({
         title: "Registration failed",

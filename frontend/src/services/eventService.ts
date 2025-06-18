@@ -107,3 +107,24 @@ export const getUserRegistrations = async (skip = 0, limit = 100) => {
 export const cancelRegistration = async () => {
   return;
 };
+
+export const fetchRegistrationById = async (registrationId: number) => {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(
+    `http://localhost:8000/api/v1/registrations/${registrationId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch registration details.");
+  }
+
+  return await response.json();
+};

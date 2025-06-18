@@ -67,10 +67,10 @@ const BugReportForm: React.FC<BugReportFormProps> = ({ onSubmitSuccess }) => {
           id: `BUG-${data.id}`, // or just use data.id
           title: data.title,
           description: data.description,
-          submittedBy: user?.id ? String(user.id) : "anonymous",
-          submittedDate: data.created_at,
+          reported_by: user?.id ? String(user.id) : "anonymous",
+          created_at: data.created_at,
           status: data.status,
-          priority, // not returned by API, but kept from user input
+          updated_at: "",
         });
       }
     } catch (error) {
@@ -108,26 +108,6 @@ const BugReportForm: React.FC<BugReportFormProps> = ({ onSubmitSuccess }) => {
           required
         />
       </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="priority">Priority</Label>
-        <Select
-          value={priority}
-          onValueChange={(value) =>
-            setPriority(value as "low" | "medium" | "high")
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="low">Low</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="high">High</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Submitting..." : "Submit Bug Report"}
       </Button>

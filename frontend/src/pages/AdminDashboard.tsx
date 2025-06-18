@@ -20,7 +20,11 @@ import {
   deleteEvent,
   getUserRegistrations,
 } from "@/services/eventService";
-import { fetchBugReports, updateBugStatus } from "@/services/bugService";
+import {
+  fetchBugReports,
+  updateBugStatus,
+  deleteBugReport,
+} from "@/services/bugService";
 import { Event, BugReport } from "@/types";
 import { toast } from "@/hooks/use-toast";
 
@@ -151,26 +155,16 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleUpdateBugStatus = async (
-    bugId: string,
+    bugId: number,
     status: "open" | "in-progress" | "resolved"
   ) => {
-    // Map to expected format
-    const statusMap: Record<
-      "open" | "in-progress" | "resolved",
-      "Open" | "In Progress" | "Resolved"
-    > = {
-      open: "Open",
-      "in-progress": "In Progress",
-      resolved: "Resolved",
-    };
-    const mappedStatus = statusMap[status];
-
     try {
-      await updateBugStatus(Number(bugId), mappedStatus);
+      // Call the API and get the updated bug
+      const updatedBug: BugReport = await updateBugStatus(bugId, status);
 
-      // Update local state
+      // Update local state with the full updated bug
       setBugReports((prev) =>
-        prev.map((bug) => (bug.id === bugId ? { ...bug, status } : bug))
+        prev.map((bug) => (bug.id === updatedBug.id ? updatedBug : bug))
       );
 
       toast({
@@ -187,6 +181,26 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleDeleteBug = async (bugId: string) => {
+    try {
+      await deleteBugReport(bugId);
+
+      // Update the local state to remove the deleted bug
+      setBugReports((prev) => prev.filter((bug) => bug.id !== bugId));
+
+      toast({
+        title: "Bug Deleted",
+        description: "The bug report has been successfully deleted.",
+      });
+    } catch (error) {
+      console.error("Error deleting bug:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete the bug report.",
+        variant: "destructive",
+      });
+    }
+  };
   // Filter events based on search query
   const filteredEvents = events.filter(
     (event) =>
@@ -266,7 +280,9 @@ const AdminDashboard: React.FC = () => {
                             <TableCell className="font-medium">
                               {event.title}
                             </TableCell>
-                            <TableCell>{event.start_time}</TableCell>
+                            <TableCell>
+                              {new Date(event.start_time).toLocaleDateString()}
+                            </TableCell>
                             <TableCell>{event.location}</TableCell>
                             <TableCell>
                               <span
@@ -294,14 +310,12 @@ const AdminDashboard: React.FC = () => {
                                   Edit
                                 </Button>
                                 <Button
-                                  variant="ghost"
+                                  variant="destructive"
                                   size="sm"
-                                  className="text-destructive hover:text-destructive/80"
                                   onClick={() =>
                                     handleDeleteEvent(String(event.id))
                                   }
                                 >
-                                  <X className="h-4 w-4 mr-1" />
                                   Delete
                                 </Button>
                               </div>
@@ -362,9 +376,9 @@ const AdminDashboard: React.FC = () => {
                             <TableCell>
                               <Badge
                                 className={`${
-                                  bug.status === "open"
+                                  bug.status === "Open"
                                     ? "bg-red-500"
-                                    : bug.status === "in-progress"
+                                    : bug.status === "In-Progress"
                                     ? "bg-yellow-500"
                                     : "bg-blue-500"
                                 }`}
@@ -374,7 +388,7 @@ const AdminDashboard: React.FC = () => {
                             </TableCell>
 
                             <TableCell>
-                              {new Date(bug.submittedDate).toLocaleDateString()}
+                              {new Date(bug.created_at).toLocaleDateString()}
                             </TableCell>
                             <TableCell>
                               <div className="flex space-x-2">
@@ -388,10 +402,10 @@ const AdminDashboard: React.FC = () => {
                                   View
                                 </Button>
                                 <select
-                                  value={bug.status}
+                                  value={bug.status.toLowerCase()}
                                   onChange={(e) =>
                                     handleUpdateBugStatus(
-                                      bug.id,
+                                      Number(bug.id),
                                       e.target.value as
                                         | "open"
                                         | "in-progress"
@@ -406,6 +420,13 @@ const AdminDashboard: React.FC = () => {
                                   </option>
                                   <option value="resolved">Resolved</option>
                                 </select>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleDeleteBug(bug.id)}
+                                >
+                                  Delete
+                                </Button>
                               </div>
                             </TableCell>
                           </TableRow>
@@ -427,7 +448,7 @@ const AdminDashboard: React.FC = () => {
           <div className="mt-8 bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Quick Stats</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
               <div className="bg-blue-50 p-4 rounded-md">
                 <div className="text-blue-600 text-3xl font-bold">
                   {events.length}
@@ -444,23 +465,28 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-yellow-50 p-4 rounded-md">
-                <div className="text-yellow-600 text-3xl font-bold">
-                  {bugReports.filter((bug) => bug.status === "open").length}
+              <div className="bg-red-50 p-4 rounded-md">
+                <div className="text-red-600 text-3xl font-bold">
+                  {bugReports.filter((bug) => bug.status === "Open").length}
                 </div>
                 <div className="text-sm text-yellow-700">Open Bug Reports</div>
               </div>
 
-              <div className="bg-red-50 p-4 rounded-md">
-                <div className="text-red-600 text-3xl font-bold">
+              <div className="bg-yellow-50 p-4 rounded-md">
+                <div className="text-yellow-600 text-3xl font-bold">
                   {
-                    bugReports.filter(
-                      (bug) =>
-                        bug.priority === "high" && bug.status !== "resolved"
-                    ).length
+                    bugReports.filter((bug) => bug.status === "In-Progress")
+                      .length
                   }
                 </div>
-                <div className="text-sm text-red-700">High Priority Bugs</div>
+                <div className="text-sm text-red-700">In-Progress Bugs</div>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-md">
+                <div className="text-blue-600 text-3xl font-bold">
+                  {bugReports.filter((bug) => bug.status === "Resolved").length}
+                </div>
+                <div className="text-sm text-red-700">Resolved Bugs</div>
               </div>
             </div>
           </div>

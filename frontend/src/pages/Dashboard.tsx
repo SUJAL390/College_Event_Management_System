@@ -17,6 +17,7 @@ import {
   getUserRegistrations,
   cancelRegistration,
   fetchEventById,
+  fetchRegistrationById,
 } from "@/services/eventService";
 import { Event, Registration } from "@/types";
 import { toast } from "@/hooks/use-toast";
@@ -24,7 +25,9 @@ import { toast } from "@/hooks/use-toast";
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-
+  const [detailedRegistration, setDetailedRegistration] =
+    useState<Registration | null>(null);
+  const [loadingQr, setLoadingQr] = useState(false);
   const [loading, setLoading] = useState(true);
   const [registrations, setRegistrations] = useState<
     { event: Event; registration: Registration }[]
@@ -38,6 +41,9 @@ const Dashboard: React.FC = () => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
+    }
+    if (detailedRegistration?.qr_code_url) {
+      console.log("QR Code URL:", detailedRegistration.qr_code_url);
     }
 
     const loadRegistrations = async () => {
@@ -59,45 +65,27 @@ const Dashboard: React.FC = () => {
     };
 
     loadRegistrations();
-  }, [user, isAuthenticated, navigate]);
-
-  const handleCancelRegistration = async (registrationId: string) => {
-    try {
-      // await cancelRegistration(registrationId);
-
-      // Update local state
-      setRegistrations((prev) =>
-        prev.filter((r) => String(r.registration.id) !== String(registrationId))
-      );
-
-      toast({
-        title: "Registration cancelled",
-        description: "You have successfully cancelled your registration",
-      });
-
-      // If the cancelled registration was the selected one, clear the selection
-      if (
-        selectedRegistration &&
-        String(selectedRegistration.registration.id) === String(registrationId)
-      ) {
-        setSelectedRegistration(null);
-      }
-    } catch (error) {
-      console.error("Failed to cancel registration:", error);
-      toast({
-        title: "Error",
-        description: "Failed to cancel registration",
-        variant: "destructive",
-      });
-    }
-  };
-
+  }, [user, isAuthenticated, navigate, detailedRegistration]);
   const upcomingEvents = registrations.filter(
     (r) => new Date(r.event.start_time) >= new Date()
   );
   const pastEvents = registrations.filter(
     (r) => new Date(r.event.start_time) < new Date()
   );
+
+  const handleViewQRCode = async (event: Event, registration: Registration) => {
+    setSelectedRegistration({ event, registration });
+    setLoadingQr(true);
+    try {
+      const fullRegistration = await fetchRegistrationById(registration.id);
+      setDetailedRegistration(fullRegistration);
+    } catch (error) {
+      console.error("Failed to fetch registration details:", error);
+      setDetailedRegistration(null);
+    } finally {
+      setLoadingQr(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -167,10 +155,7 @@ const Dashboard: React.FC = () => {
                                   <Button
                                     size="sm"
                                     onClick={() =>
-                                      setSelectedRegistration({
-                                        event,
-                                        registration,
-                                      })
+                                      handleViewQRCode(event, registration)
                                     }
                                   >
                                     View QR Code
@@ -184,18 +169,6 @@ const Dashboard: React.FC = () => {
                                   >
                                     Event Details
                                   </Button>
-                                  {/* <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-destructive hover:text-destructive/80"
-                                    onClick={() =>
-                                      handleCancelRegistration(
-                                        String(registration.id)
-                                      )
-                                    }
-                                  >
-                                    Cancel Registration
-                                  </Button> */}
                                 </div>
                               </div>
                             </div>
@@ -255,25 +228,6 @@ const Dashboard: React.FC = () => {
                                     {event.location}
                                   </div>
                                 </div>
-                                {/* <div className="flex items-center mb-4">
-                                  <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                                    registration.attended 
-                                      ? 'bg-green-100 text-green-800' 
-                                      : 'bg-red-100 text-red-800'
-                                  }`}>
-                                    {registration.attended ? (
-                                      <>
-                                        <Check className="h-3 w-3 mr-1" />
-                                        Attended
-                                      </>
-                                    ) : (
-                                      <>
-                                        <X className="h-3 w-3 mr-1" />
-                                        Did not attend
-                                      </>
-                                    )}
-                                  </div>
-                                </div> */}
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -379,20 +333,6 @@ const Dashboard: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex justify-between">
-                      <div>
-                        <p className="text-sm font-medium">Events Attended</p>
-                        <p className="text-3xl font-bold">
-                          {/* {pastEvents.filter(({ registration }) => registration.attended).length} */}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">Missed Events</p>
-                        <p className="text-3xl font-bold">
-                          {/* {pastEvents.filter(({ registration }) => !registration.attended).length} */}
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -406,15 +346,24 @@ const Dashboard: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full">
             <div className="p-6">
-              <QRCodeDisplay
-                qrValue={selectedRegistration.registration.qr_code_url}
-                eventTitle={selectedRegistration.event.title}
-              />
+              {loadingQr ? (
+                <p>Loading QR Code...</p>
+              ) : detailedRegistration ? (
+                <QRCodeDisplay
+                  qrValue={`http://localhost:8000${detailedRegistration.qr_code_url}`}
+                  eventTitle={selectedRegistration.event.title}
+                />
+              ) : (
+                <p>Failed to load QR Code.</p>
+              )}
             </div>
             <div className="border-t p-4 flex justify-end">
               <Button
                 variant="ghost"
-                onClick={() => setSelectedRegistration(null)}
+                onClick={() => {
+                  setSelectedRegistration(null);
+                  setDetailedRegistration(null);
+                }}
               >
                 Close
               </Button>
