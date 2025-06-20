@@ -41,7 +41,12 @@ export const deleteEvent = async (eventId: number) => {
     throw new Error("Failed to delete event");
   }
 
-  return response.json(); // or response.status === 204 if it returns no body
+  // Only parse JSON if there's content
+  if (response.status === 204) {
+    return; // No content to return
+  }
+
+  return response.json();
 };
 
 export const registerForEvent = async (userId: number, eventId: number) => {

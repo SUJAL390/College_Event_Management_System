@@ -24,6 +24,8 @@ import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
 import BugReportDetail from "./pages/BugReportDetail";
 import StudentUsers from "./pages/StudentUsers";
+import Registrations from "./pages/Registrations";
+import AdminCheckIn from "./pages/Checkin";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,8 @@ const App = () => (
               <Route path="/index" element={<Index />} />
               <Route path="/events" element={<Events />} />
               <Route path="/student" element={<StudentUsers />} />
+              <Route path="/registrations" element={<Registrations />} />
+              <Route path="/checkin" element={<AdminCheckIn />} />
               <Route path="/events/create" element={<CreateEvent />} />
               <Route path="/events/:id" element={<EventDetail />} />
               <Route path="/events/:id/edit" element={<EditEvent />} />

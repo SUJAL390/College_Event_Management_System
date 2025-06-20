@@ -67,12 +67,12 @@ const AdminDashboard: React.FC = () => {
         });
         setEventRegistrationCount(countMap);
       } catch (error) {
-        console.error("Failed to load registrations:", error);
-        toast({
-          title: "Error",
-          description: "Unable to fetch registrations",
-          variant: "destructive",
-        });
+        // console.error("Failed to load registrations:", error);
+        // toast({
+        //   title: "Error",
+        //   description: "Unable to fetch registrations",
+        //   variant: "destructive",
+        // });
       } finally {
         setLoading(false);
       }
@@ -309,7 +309,7 @@ const AdminDashboard: React.FC = () => {
                                   <Edit className="h-4 w-4 mr-1" />
                                   Edit
                                 </Button>
-                                <Button
+                                {/* <Button
                                   variant="destructive"
                                   size="sm"
                                   onClick={() =>
@@ -317,7 +317,7 @@ const AdminDashboard: React.FC = () => {
                                   }
                                 >
                                   Delete
-                                </Button>
+                                </Button> */}
                               </div>
                             </TableCell>
                           </TableRow>
@@ -469,7 +469,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="text-red-600 text-3xl font-bold">
                   {bugReports.filter((bug) => bug.status === "Open").length}
                 </div>
-                <div className="text-sm text-yellow-700">Open Bug Reports</div>
+                <div className="text-sm text-red-700">Open Bug Reports</div>
               </div>
 
               <div className="bg-yellow-50 p-4 rounded-md">
@@ -479,14 +479,14 @@ const AdminDashboard: React.FC = () => {
                       .length
                   }
                 </div>
-                <div className="text-sm text-red-700">In-Progress Bugs</div>
+                <div className="text-sm text-yellow-700">In-Progress Bugs</div>
               </div>
 
               <div className="bg-blue-50 p-4 rounded-md">
                 <div className="text-blue-600 text-3xl font-bold">
                   {bugReports.filter((bug) => bug.status === "Resolved").length}
                 </div>
-                <div className="text-sm text-red-700">Resolved Bugs</div>
+                <div className="text-sm text-blue-700">Resolved Bugs</div>
               </div>
             </div>
           </div>

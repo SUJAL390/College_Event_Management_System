@@ -127,6 +127,31 @@ const Navbar: React.FC = () => {
                 </Link>
               )}
 
+              {isAuthenticated && user?.is_admin === true && (
+                <Link
+                  to="/registrations"
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                    isActive("/registrations")
+                      ? "border-college-600 text-college-800"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  Registrations
+                </Link>
+              )}
+              {isAuthenticated && user?.is_admin === true && (
+                <Link
+                  to="/checkin"
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                    isActive("/checkin")
+                      ? "border-college-600 text-college-800"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  Check-In
+                </Link>
+              )}
+
               {isAuthenticated && user.is_admin === false && (
                 <Link
                   to="/bug-report"
@@ -260,6 +285,17 @@ const Navbar: React.FC = () => {
                 }`}
               >
                 Student Users
+              </Link>
+              <Link
+                to="/registrations"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  isActive("/registrations")
+                    ? "bg-college-100 text-college-800"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                Registrations
               </Link>
             </>
           )}

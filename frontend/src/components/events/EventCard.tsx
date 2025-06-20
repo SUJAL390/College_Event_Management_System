@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin } from "lucide-react";
 import { Event } from "@/types";
+import { useAuth } from "@/context/AuthContext";
 
 interface EventCardProps {
   event: Event;
@@ -22,6 +23,7 @@ const EventCard: React.FC<EventCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const isFullyBooked = registeredCount >= event.capacity;
+  const { user } = useAuth();
 
   // Extract date and time from ISO string
   const formattedDate = new Date(event.start_time).toLocaleDateString();
@@ -64,15 +66,17 @@ const EventCard: React.FC<EventCardProps> = ({
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
             <span className="truncate">{event.location}</span>
           </div>
-          <div className="text-xs">
-            <span
-              className={
-                isFullyBooked ? "text-destructive" : "text-emerald-600"
-              }
-            >
-              {registeredCount} / {event.capacity} spots filled
-            </span>
-          </div>
+          {user.is_admin === true && (
+            <div className="text-xs">
+              <span
+                className={
+                  isFullyBooked ? "text-destructive" : "text-emerald-600"
+                }
+              >
+                {registeredCount} / {event.capacity} spots filled
+              </span>
+            </div>
+          )}
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
