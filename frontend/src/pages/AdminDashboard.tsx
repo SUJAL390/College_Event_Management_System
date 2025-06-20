@@ -67,12 +67,6 @@ const AdminDashboard: React.FC = () => {
         });
         setEventRegistrationCount(countMap);
       } catch (error) {
-        // console.error("Failed to load registrations:", error);
-        // toast({
-        //   title: "Error",
-        //   description: "Unable to fetch registrations",
-        //   variant: "destructive",
-        // });
       } finally {
         setLoading(false);
       }
@@ -131,29 +125,6 @@ const AdminDashboard: React.FC = () => {
     loadData();
   }, [user, isAuthenticated, navigate]);
 
-  const handleDeleteEvent = async (eventId: string) => {
-    try {
-      await deleteEvent(Number(eventId)); // convert to number if needed
-
-      toast({
-        title: "Event Deleted",
-        description: "The event has been successfully deleted.",
-      });
-
-      // Refresh or remove the deleted event from local state
-      setEvents((prevEvents) =>
-        prevEvents.filter((event) => event.id !== Number(eventId))
-      );
-    } catch (error) {
-      console.error("Failed to delete event:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the event.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleUpdateBugStatus = async (
     bugId: number,
     status: "open" | "in-progress" | "resolved"
@@ -184,7 +155,6 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteBug = async (bugId: string) => {
     try {
       await deleteBugReport(bugId);
-
       // Update the local state to remove the deleted bug
       setBugReports((prev) => prev.filter((bug) => bug.id !== bugId));
 
@@ -207,7 +177,6 @@ const AdminDashboard: React.FC = () => {
       event.title.toLowerCase().includes(eventsSearchQuery.toLowerCase()) ||
       event.description.toLowerCase().includes(eventsSearchQuery.toLowerCase())
   );
-
   // Filter bug reports based on search query
   const filteredBugReports = bugReports.filter(
     (bug) =>
@@ -215,11 +184,9 @@ const AdminDashboard: React.FC = () => {
       bug.description.toLowerCase().includes(bugsSearchQuery.toLowerCase()) ||
       bug.id.toLowerCase().includes(bugsSearchQuery.toLowerCase())
   );
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-
       <div className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -309,15 +276,6 @@ const AdminDashboard: React.FC = () => {
                                   <Edit className="h-4 w-4 mr-1" />
                                   Edit
                                 </Button>
-                                {/* <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={() =>
-                                    handleDeleteEvent(String(event.id))
-                                  }
-                                >
-                                  Delete
-                                </Button> */}
                               </div>
                             </TableCell>
                           </TableRow>
