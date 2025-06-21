@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 // @ts-ignore
-import { QrReader } from "react-qr-reader";
+import QrReader from "react-qr-scanner";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
@@ -91,15 +91,9 @@ const AdminCheckIn: React.FC = () => {
       {/* Render scanner only if not already scanned */}
       {!scanned && (
         <QrReader
-          constraints={{ facingMode: "environment" }}
-          onResult={(result, error) => {
-            if (!!result) {
-              handleScan(result.getText());
-            }
-            if (!!error) {
-              handleError(error);
-            }
-          }}
+          delay={300}
+          onError={(err) => console.error(err)}
+          onScan={(data) => data && console.log(data)}
           style={{ width: "100%" }}
         />
       )}
