@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 // @ts-ignore
 import { QrReader } from "react-qr-reader";
-
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
@@ -72,7 +71,9 @@ const AdminCheckIn: React.FC = () => {
   };
 
   const handleError = (err: any) => {
-    console.error("QR Scan Error:", err);
+    // Most decode errors can be ignored during scanning
+    if (typeof err === "string" && err.includes("e2")) return;
+    // Log unexpected errors
   };
 
   if (!user?.is_admin) {
@@ -90,9 +91,15 @@ const AdminCheckIn: React.FC = () => {
       {/* Render scanner only if not already scanned */}
       {!scanned && (
         <QrReader
-          delay={500}
-          onError={handleError}
-          onScan={handleScan}
+          constraints={{ facingMode: "environment" }}
+          onResult={(result, error) => {
+            if (!!result) {
+              handleScan(result.getText());
+            }
+            if (!!error) {
+              handleError(error);
+            }
+          }}
           style={{ width: "100%" }}
         />
       )}

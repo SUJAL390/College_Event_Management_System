@@ -297,6 +297,17 @@ const Navbar: React.FC = () => {
               >
                 Registrations
               </Link>
+              <Link
+                to="/checkin"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  isActive("/checkin")
+                    ? "bg-college-100 text-college-800"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                Check-In
+              </Link>
             </>
           )}
 
