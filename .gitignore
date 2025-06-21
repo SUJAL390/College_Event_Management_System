@@ -1,0 +1,41 @@
+# Python
+__pycache_/
+*.py[cod]
+*.class
+*.so
+.Python
+venv/
+**/venv/
+**/__pycache__/
+**/*.pyc
+
+# Environment variables and secrets
+.env
+**/.env*
+frontend/.env.development
+frontend/.env.production
+
+# Database files
+*.db
+**/*.db
+**/*.sqlite
+
+# Static files
+static/qrcodes/*
+!static/qrcodes/.gitkeep
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# IDE and editors
+.vscode/
+.idea/
+
+# ML models
+backend/ml/models/serialized/*
+
+# Logs
+*.log
+logs/
