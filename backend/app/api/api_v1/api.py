@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.api_v1.endpoints import test
-from app.api.api_v1.endpoints import auth, events, registrations, users, bug_reports, ml
+from app.api.api_v1.endpoints import auth, events, registrations, users, bug_reports, ml,uploads
 
 
 api_router = APIRouter()
@@ -11,3 +11,4 @@ api_router.include_router(registrations.router, prefix="/registrations", tags=["
 api_router.include_router(bug_reports.router, prefix="/bugs", tags=["bug reports"])
 api_router.include_router(ml.router, prefix="/ml", tags=["machine learning"])
 api_router.include_router(test.router, prefix="/test", tags=["test"])
+api_router.include_router(uploads.router, prefix="/uploads", tags=["uploads"])
