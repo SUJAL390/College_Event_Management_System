@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/SUJAL390/College_Event_Management_System.git'
+        git branch: 'main', url: 'https://github.com/SUJAL390/College_Event_Management_System.git'
       }
     }
 
@@ -17,7 +17,6 @@ pipeline {
       steps {
         dir("${BACKEND_DIR}") {
           sh 'pip install -r requirements.txt'
-          
           sh 'pytest || echo "No tests or skipped"'
         }
       }
