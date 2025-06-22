@@ -90,9 +90,19 @@ const AdminCheckIn: React.FC = () => {
       {/* Render scanner only if not already scanned */}
       {!scanned && (
         <QrReader
+<<<<<<< HEAD
           delay={500}
           onError={handleError}
           onScan={handleScan}
+=======
+          delay={300}
+          onError={handleError}
+          onScan={(data) => {
+            if (data?.text) {
+              handleScan(data.text);
+            }
+          }}
+>>>>>>> da874a7 (Final improvisation on UI)
           style={{ width: "100%" }}
         />
       )}

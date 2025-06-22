@@ -101,8 +101,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     } catch (error) {
       toast({
         title: "Registration failed",
-        description:
-          error instanceof Error ? error.message : "An error occurred",
+        description: "Please enter a valid email",
         variant: "destructive",
       });
       throw error;

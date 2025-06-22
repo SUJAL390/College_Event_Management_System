@@ -49,7 +49,10 @@ const Login: React.FC = () => {
     }
 
     if (signupPassword !== confirmPassword) {
-      alert("Passwords do not match");
+      toast({
+        title: "Passwords do not match",
+        variant: "destructive",
+      });
       return;
     }
 

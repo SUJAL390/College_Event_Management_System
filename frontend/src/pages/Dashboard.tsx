@@ -36,6 +36,7 @@ const Dashboard: React.FC = () => {
     event: Event;
     registration: Registration;
   } | null>(null);
+  const BACKEND_BASE_URL = "http://localhost:8000";
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -128,7 +129,11 @@ const Dashboard: React.FC = () => {
                             <div className="flex flex-col sm:flex-row">
                               <div className="sm:w-1/4 bg-muted">
                                 <img
-                                  src={event.image_url || "/placeholder.svg"}
+                                  src={
+                                    event.image_url?.startsWith("http")
+                                      ? event.image_url
+                                      : BACKEND_BASE_URL + event.image_url
+                                  }
                                   alt={event.title}
                                   className="w-full h-full object-cover"
                                 />

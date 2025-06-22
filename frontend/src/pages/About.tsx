@@ -59,16 +59,48 @@ const About: React.FC = () => {
               CampusEvents platform, please don't hesitate to reach out to our
               support team.
             </p>
-            <div className="flex flex-col space-y-2">
-              <p>
-                <strong>Email:</strong> support@campusevents.edu
-              </p>
-              <p>
-                <strong>Phone:</strong> (555) 123-4567
-              </p>
-              <p>
-                <strong>Office:</strong> Student Center, Room 301
-              </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Member 1 */}
+              <div className="bg-muted p-4 rounded-xl shadow-sm">
+                <h3 className="font-semibold text-lg">Binit Joshi</h3>
+                <p className="text-sm text-muted-foreground">
+                  Role: Frontend Developer
+                </p>
+                <p className="text-sm">Email: joshibinit8488@gmail.com</p>
+              </div>
+
+              {/* Member 2 */}
+              <div className="bg-muted p-4 rounded-xl shadow-sm">
+                <h3 className="font-semibold text-lg">Sujal Maharjan</h3>
+                <p className="text-sm text-muted-foreground">
+                  Role: Backend Developer
+                </p>
+                <p className="text-sm">Email: sujalmaharjan007@gmail.com</p>
+              </div>
+
+              {/* Member 3 */}
+              <div className="bg-muted p-4 rounded-xl shadow-sm">
+                <h3 className="font-semibold text-lg">Kripa Khanal</h3>
+                <p className="text-sm text-muted-foreground">
+                  Role: Scrum Master
+                </p>
+                <p className="text-sm">Email: kripakhanal54@gmail.com</p>
+              </div>
+
+              {/* Member 4 */}
+              <div className="bg-muted p-4 rounded-xl shadow-sm">
+                <h3 className="font-semibold text-lg">Astha Shrestha</h3>
+                <p className="text-sm text-muted-foreground">Role: AI</p>
+                <p className="text-sm">Email: aasthashrestha688@gmail.com</p>
+              </div>
+
+              {/* Member 5 */}
+              <div className="bg-muted p-4 rounded-xl shadow-sm">
+                <h3 className="font-semibold text-lg">Kabin Shrestha</h3>
+                <p className="text-sm text-muted-foreground">Role: QA</p>
+                <p className="text-sm">Email: kabinshrestha377@gmail.com</p>
+              </div>
             </div>
           </CardContent>
         </Card>
