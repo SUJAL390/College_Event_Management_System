@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const API_BASE = "http://localhost:8000/api/v1/events";
+const IMAGE_UPLOAD_URL = "http://localhost:8000/api/v1/uploads/images";
 
 const EditEvent: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -60,6 +65,93 @@ const EditEvent: React.FC = () => {
       ...prev,
       [name]: name === "capacity" ? parseInt(value) || 0 : value,
     }));
+  };
+
+  // Handle drag-drop or click file input change
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file",
+        description: "Only image files are allowed.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const token = localStorage.getItem("access_token");
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+
+      const response = await fetch(IMAGE_UPLOAD_URL, {
+        method: "POST",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: formDataUpload,
+      });
+
+      if (!response.ok) throw new Error("Image upload failed.");
+
+      const data = await response.json();
+      setFormData((prev) => ({
+        ...prev,
+        image_url: data.url,
+      }));
+
+      toast({
+        title: "Image uploaded",
+        description: "Image uploaded successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: (error as Error).message || "Could not upload image.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+      // Reset input so same file can be re-uploaded if needed
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  // Drag and Drop Handlers
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+      // Manually trigger file input change event with this file
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      if (fileInputRef.current) {
+        fileInputRef.current.files = dt.files;
+        handleFileChange({
+          target: fileInputRef.current,
+        } as React.ChangeEvent<HTMLInputElement>);
+      }
+      e.dataTransfer.clearData();
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  // Trigger file dialog on box click
+  const handleBoxClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,17 +250,45 @@ const EditEvent: React.FC = () => {
           className="w-full px-4 py-2 border rounded-lg"
           required
         />
-        <input
-          type="text"
-          name="image_url"
-          value={formData.image_url}
-          onChange={handleChange}
-          placeholder="Image URL (optional)"
-          className="w-full px-4 py-2 border rounded-lg"
-        />
+
+        {/* Image upload area */}
+        <div
+          className={`w-full h-40 border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer
+            ${
+              uploading
+                ? "opacity-50 pointer-events-none"
+                : "hover:border-blue-600"
+            }
+          `}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onClick={handleBoxClick}
+          title="Click or drag & drop image here to upload"
+        >
+          {formData.image_url ? (
+            <img
+              src={formData.image_url}
+              alt="Event"
+              className="max-h-full max-w-full object-contain"
+            />
+          ) : (
+            <p className="text-muted-foreground select-none">
+              Drag & drop an image or click to select
+            </p>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </div>
+
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          disabled={uploading}
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
         >
           Save Changes
         </button>

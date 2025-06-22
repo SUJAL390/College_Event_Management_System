@@ -17,6 +17,8 @@ interface EventCardProps {
   registeredCount?: number; // passed optionally from parent
 }
 
+const BACKEND_BASE_URL = "http://localhost:8000";
+
 const EventCard: React.FC<EventCardProps> = ({
   event,
   registeredCount = 0,
@@ -32,11 +34,18 @@ const EventCard: React.FC<EventCardProps> = ({
     minute: "2-digit",
   });
 
+  // Compose full image URL
+  const imgSrc = event.image_url
+    ? event.image_url.startsWith("http")
+      ? event.image_url
+      : BACKEND_BASE_URL + event.image_url
+    : "/placeholder.svg";
+
   return (
     <Card className="event-card overflow-hidden h-full flex flex-col">
       <div className="aspect-video w-full overflow-hidden bg-muted">
         <img
-          src={event.image_url || "/placeholder.svg"}
+          src={imgSrc}
           alt={event.title}
           className="w-full h-full object-cover"
         />

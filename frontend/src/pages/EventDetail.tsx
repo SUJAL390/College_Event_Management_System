@@ -9,6 +9,8 @@ import Navbar from "@/components/layout/Navbar";
 import { registerForEvent } from "@/services/eventService";
 import { useAuth } from "@/context/AuthContext";
 
+const BACKEND_BASE_URL = "http://localhost:8000";
+
 const EventDetail: React.FC = () => {
   const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
@@ -35,6 +37,7 @@ const EventDetail: React.FC = () => {
     };
 
     loadEvent();
+
     const checkIfRegistered = async () => {
       try {
         const userId = Number(localStorage.getItem("user_id"));
@@ -88,6 +91,13 @@ const EventDetail: React.FC = () => {
     minute: "2-digit",
   });
 
+  // Fix image URL to include backend base URL if needed
+  const imgSrc = event.image_url
+    ? event.image_url.startsWith("http")
+      ? event.image_url
+      : BACKEND_BASE_URL + event.image_url
+    : "/placeholder.svg";
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -98,7 +108,7 @@ const EventDetail: React.FC = () => {
 
         <div className="rounded-lg overflow-hidden shadow bg-white">
           <img
-            src={event.image_url || "/placeholder.svg"}
+            src={imgSrc}
             alt={event.title}
             className="w-full h-64 object-cover"
           />
@@ -131,6 +141,7 @@ const EventDetail: React.FC = () => {
                 {formattedStartDate}
               </div>
             </div>
+
             <div>
               <h2 className="text-lg font-semibold text-gray-600">End Date:</h2>
               <div className="flex items-center text-sm text-muted-foreground">
@@ -138,6 +149,7 @@ const EventDetail: React.FC = () => {
                 {formattedEndDate}
               </div>
             </div>
+
             <div>
               <h2 className="text-lg font-semibold text-gray-600">
                 Start Time:
@@ -147,6 +159,7 @@ const EventDetail: React.FC = () => {
                 {formattedStartTime}
               </div>
             </div>
+
             <div>
               <h2 className="text-lg font-semibold text-gray-600">End Time:</h2>
               <div className="flex items-center text-sm text-muted-foreground">
@@ -189,7 +202,7 @@ const EventDetail: React.FC = () => {
                         setRegisterMessage(
                           "Successfully registered for the event!"
                         );
-                        setIsRegistered(true); // 👈 mark as registered
+                        setIsRegistered(true);
                       } catch (error: any) {
                         setRegisterMessage(
                           error.message || "Registration failed."

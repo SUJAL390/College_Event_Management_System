@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // @ts-ignore
-import { QrReader } from "react-qr-reader";
+
+import QrReader from "react-qr-scanner";
 
 import { useNavigate } from "react-router-dom";
 
@@ -90,11 +91,6 @@ const AdminCheckIn: React.FC = () => {
       {/* Render scanner only if not already scanned */}
       {!scanned && (
         <QrReader
-<<<<<<< HEAD
-          delay={500}
-          onError={handleError}
-          onScan={handleScan}
-=======
           delay={300}
           onError={handleError}
           onScan={(data) => {
@@ -102,7 +98,6 @@ const AdminCheckIn: React.FC = () => {
               handleScan(data.text);
             }
           }}
->>>>>>> da874a7 (Final improvisation on UI)
           style={{ width: "100%" }}
         />
       )}
