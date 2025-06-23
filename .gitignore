@@ -39,3 +39,5 @@ backend/ml/models/serialized/*
 # Logs
 *.log
 logs/
+
+setup_db.bat
