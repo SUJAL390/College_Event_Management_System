@@ -7,20 +7,18 @@ from app.core.config import settings
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
-origins = ["http://localhost:3000", "http://localhost:3001", "http://localhost:8000", "http://localhost","https://playful-dango-68fecc.netlify.app"]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, 
+    allow_origins=settings.BACKEND_CORS_ORIGINS,         
     allow_credentials=True,
-    allow_methods=["*"], # Allows all standard methods
-    allow_headers=["*"], # Allows all headers
-    expose_headers=["*"], 
+    allow_methods=["*"],         
+    allow_headers=["*"],         
+    expose_headers=["*"],
 )
 
-
 app.include_router(api_router, prefix=settings.API_V1_STR)
-
 
 if os.path.isdir("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
