@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "College Event Management System"
     
   
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000","https://playful-dango-68fecc.netlify.app","*"]
+    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000","https://playful-dango-68fecc.netlify.app"]
     
     @field_validator("BACKEND_CORS_ORIGINS", mode='before')  
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
