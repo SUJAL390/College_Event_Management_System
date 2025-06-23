@@ -1,5 +1,5 @@
 import { BugReport } from "@/types";
-const BASE_URL = "http://localhost:8000/api/v1/bugs";
+const BASE_URL = "https://college-events-backend-j4bg.onrender.com/api/v1/bugs";
 // Mock data
 const MOCK_BUG_REPORTS: BugReport[] = [
   {
@@ -146,11 +146,14 @@ export const deleteBugReport = async (bugId: string): Promise<void> => {
 
 export const getBugReportById = async (id: string): Promise<BugReport> => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(`http://localhost:8000/api/v1/bugs/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(
+    `https://college-events-backend-j4bg.onrender.com/api/v1/bugs/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch bug report");

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { toast } from "@/hooks/use-toast";
 
-const BACKEND_BASE_URL = "http://localhost:8000";
+const BACKEND_BASE_URL = "https://college-events-backend-j4bg.onrender.com";
 const IMAGE_UPLOAD_URL = `${BACKEND_BASE_URL}/api/v1/uploads/images`;
 const EVENT_CREATE_URL = `${BACKEND_BASE_URL}/api/v1/events/`;
 

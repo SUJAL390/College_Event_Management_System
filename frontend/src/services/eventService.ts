@@ -1,7 +1,8 @@
 // @/services/eventService.ts
 import { Event } from "@/types";
 
-const API_URL = "http://localhost:8000/api/v1/events/";
+const API_URL =
+  "https://college-events-backend-j4bg.onrender.com/api/v1/events/";
 
 export async function fetchEvents(): Promise<Event[]> {
   const token = localStorage.getItem("access_token");
@@ -27,7 +28,7 @@ export const deleteEvent = async (eventId: number) => {
   const token = localStorage.getItem("access_token");
 
   const response = await fetch(
-    `http://localhost:8000/api/v1/events/${eventId}`,
+    `https://college-events-backend-j4bg.onrender.com/api/v1/events/${eventId}`,
     {
       method: "DELETE",
       headers: {
@@ -52,14 +53,17 @@ export const deleteEvent = async (eventId: number) => {
 export const registerForEvent = async (userId: number, eventId: number) => {
   const token = localStorage.getItem("access_token");
 
-  const response = await fetch("http://localhost:8000/api/v1/registrations", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // assuming backend requires it
-    },
-    body: JSON.stringify({ user_id: userId, event_id: eventId }),
-  });
+  const response = await fetch(
+    "https://college-events-backend-j4bg.onrender.com/api/v1/registrations",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // assuming backend requires it
+      },
+      body: JSON.stringify({ user_id: userId, event_id: eventId }),
+    }
+  );
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -71,14 +75,17 @@ export const registerForEvent = async (userId: number, eventId: number) => {
 
 export const fetchEventById = async (id: string): Promise<Event> => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(`http://localhost:8000/api/v1/events/${id}/`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-    credentials: "include",
-  });
+  const response = await fetch(
+    `https://college-events-backend-j4bg.onrender.com/api/v1/events/${id}/`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch event by ID");
@@ -92,7 +99,7 @@ export const getUserRegistrations = async (skip = 0, limit = 100) => {
   const token = localStorage.getItem("access_token");
 
   const response = await fetch(
-    `http://localhost:8000/api/v1/registrations?skip=${skip}&limit=${limit}`,
+    `https://college-events-backend-j4bg.onrender.com/api/v1/registrations?skip=${skip}&limit=${limit}`,
     {
       method: "GET",
       headers: {
@@ -117,7 +124,7 @@ export const fetchRegistrationById = async (registrationId: number) => {
   const token = localStorage.getItem("access_token");
 
   const response = await fetch(
-    `http://localhost:8000/api/v1/registrations/${registrationId}`,
+    `https://college-events-backend-j4bg.onrender.com/api/v1/registrations/${registrationId}`,
     {
       method: "GET",
       headers: {

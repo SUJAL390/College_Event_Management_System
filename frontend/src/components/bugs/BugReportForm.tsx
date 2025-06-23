@@ -32,18 +32,21 @@ const BugReportForm: React.FC<BugReportFormProps> = ({ onSubmitSuccess }) => {
     try {
       const token = localStorage.getItem("access_token");
 
-      const response = await fetch("http://localhost:8000/api/v1/bugs/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // If auth is required
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          status: "Open",
-        }),
-      });
+      const response = await fetch(
+        "https://college-events-backend-j4bg.onrender.com/api/v1/bugs/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // If auth is required
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            status: "Open",
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to submit bug report");

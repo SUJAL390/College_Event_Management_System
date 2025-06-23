@@ -9,7 +9,7 @@ import Navbar from "@/components/layout/Navbar";
 import { registerForEvent } from "@/services/eventService";
 import { useAuth } from "@/context/AuthContext";
 
-const BACKEND_BASE_URL = "http://localhost:8000";
+const BACKEND_BASE_URL = "https://college-events-backend-j4bg.onrender.com";
 
 const EventDetail: React.FC = () => {
   const { user } = useAuth();
@@ -46,7 +46,7 @@ const EventDetail: React.FC = () => {
         if (!userId || !token) return;
 
         const response = await fetch(
-          "http://localhost:8000/api/v1/registrations/",
+          "https://college-events-backend-j4bg.onrender.com/api/v1/registrations/",
           {
             headers: {
               Authorization: `Bearer ${token}`,

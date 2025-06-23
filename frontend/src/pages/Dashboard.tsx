@@ -36,7 +36,7 @@ const Dashboard: React.FC = () => {
     event: Event;
     registration: Registration;
   } | null>(null);
-  const BACKEND_BASE_URL = "http://localhost:8000";
+  const BACKEND_BASE_URL = "https://college-events-backend-j4bg.onrender.com";
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -355,7 +355,7 @@ const Dashboard: React.FC = () => {
                 <p>Loading QR Code...</p>
               ) : detailedRegistration ? (
                 <QRCodeDisplay
-                  qrValue={`http://localhost:8000${detailedRegistration.qr_code_url}`}
+                  qrValue={`https://college-events-backend-j4bg.onrender.com${detailedRegistration.qr_code_url}`}
                   eventTitle={selectedRegistration.event.title}
                 />
               ) : (
