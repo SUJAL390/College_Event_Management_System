@@ -2,8 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
-const API_BASE = "http://localhost:8000/api/v1/events";
-const IMAGE_UPLOAD_URL = "http://localhost:8000/api/v1/uploads/images";
+const API_BASE =
+  "https://college-events-backend-j4bg.onrender.com/api/v1/events";
+const IMAGE_UPLOAD_URL =
+  "https://college-events-backend-j4bg.onrender.com/api/v1/uploads/images";
 
 const EditEvent: React.FC = () => {
   const { id } = useParams<{ id: string }>();

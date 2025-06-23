@@ -17,7 +17,7 @@ interface EventCardProps {
   registeredCount?: number; // passed optionally from parent
 }
 
-const BACKEND_BASE_URL = "http://localhost:8000";
+const BACKEND_BASE_URL = "https://college-events-backend-j4bg.onrender.com";
 
 const EventCard: React.FC<EventCardProps> = ({
   event,

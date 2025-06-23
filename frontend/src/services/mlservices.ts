@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000/api/v1/ml";
+const API_BASE = "https://college-events-backend-j4bg.onrender.com/api/v1/ml";
 
 export interface AttendancePrediction {
   user_id: number;

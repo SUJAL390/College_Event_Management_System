@@ -1,7 +1,7 @@
 import axios from "axios";
 import { User } from "@/types";
 
-const API_URL = "http://localhost:8000/api/v1";
+const API_URL = "https://college-events-backend-j4bg.onrender.com/api/v1";
 
 export const getAllUsers = async (): Promise<User[]> => {
   const token = localStorage.getItem("access_token");

@@ -34,7 +34,7 @@ const AdminCheckIn: React.FC = () => {
       const token = localStorage.getItem("access_token");
 
       const response = await axios.post(
-        `http://localhost:8000/api/v1/registrations/${registration_id}/check-in?unique_code=${encodeURIComponent(
+        `https://college-events-backend-j4bg.onrender.com/api/v1/registrations/${registration_id}/check-in?unique_code=${encodeURIComponent(
           unique_code
         )}`,
         null,

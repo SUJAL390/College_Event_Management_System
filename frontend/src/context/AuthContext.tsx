@@ -3,7 +3,7 @@ import { User, UserRole } from "@/types";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api/v1";
+const API_URL = "https://college-events-backend-j4bg.onrender.com/api/v1";
 
 interface AuthContextType {
   user: User | null;
