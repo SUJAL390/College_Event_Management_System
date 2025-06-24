@@ -1,6 +1,6 @@
 @echo off
 echo Creating PostgreSQL database...
-set PGPASSWORD=CLFA63827S
+set PGPASSWORD="your_pg_password"
 
 psql -U postgres -c "CREATE DATABASE college_events;"
 echo Database created successfully!
